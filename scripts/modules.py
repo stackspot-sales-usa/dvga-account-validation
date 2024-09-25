@@ -85,7 +85,7 @@ def execute_qc_and_get_response(stk_access_token, qc_slug,input_data, file_name)
     else:
         return None
     
-def process_file(file_name, file_code, stk_access_token, qc_slug, repo_owner, repo_name, JIRA_API_TOKEN):
+def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN):
     print(f"Started processing file: {os.path.basename(file_name)}")
     if not file_code:  # Check if the file code is empty
         print(f"Skipping empty file: {file_name}")
@@ -220,7 +220,7 @@ def create_jira_issue(issue_title, issue_description, JIRA_API_TOKEN,file_name):
         print(response.text)
         return None
 
-def get_pull_request_files(repo_owner, repo_name, pull_number, github_token):
+def get_pull_request_files(repo_owner, repo_name, pull_number, github_token):#This function is not finished
     # GitHub API URL to get the list of files in a pull request
     url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/pulls/{pull_number}/files"
     headers = {
@@ -251,7 +251,7 @@ def get_pull_request_files(repo_owner, repo_name, pull_number, github_token):
     
     return code_dict
 
-def get_last_pull_request_number(repo_owner, repo_name, github_token):
+def get_last_pull_request_number(repo_owner, repo_name, github_token):#This function is not finished
     url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/pulls?state=all&sort=created&direction=desc"
     headers = {
         "Accept": "application/vnd.github.v3+json",

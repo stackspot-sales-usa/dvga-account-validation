@@ -21,7 +21,7 @@ code_dict = read_select_files_in_repo(repo_path)
 with concurrent.futures.ThreadPoolExecutor() as executor:
     futures = [
         executor.submit(
-            process_file, file_name, file_code, stk_access_token, qc_slug, repo_owner, repo_name, JIRA_API_TOKEN
+            process_file, file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN
         
             
         )
