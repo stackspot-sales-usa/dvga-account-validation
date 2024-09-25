@@ -29,6 +29,5 @@ jobs:
         STK_CLIENT_ID: ${{ secrets.STK_CLIENT_ID }}
         STK_CLIENT_SECRET: ${{ secrets.STK_CLIENT_SECRET }}
         STK_CLIENT_REALM: ${{ secrets.STK_CLIENT_REALM }}
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
         JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         GITHUB_WORKSPACE: ${{ github.workspace }}
