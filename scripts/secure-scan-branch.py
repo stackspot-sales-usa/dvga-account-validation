@@ -10,7 +10,7 @@ client_id = get_env_variable("STK_CLIENT_ID")
 client_secret = get_env_variable("STK_CLIENT_SECRET")
 realm = get_env_variable("STK_CLIENT_REALM")
 commit_sha = get_env_variable("GITHUB_SHA")
-gh_access_token = get_env_variable("GH_TOKEN")
+#gh_access_token = get_env_variable("GH_TOKEN")
 JIRA_API_TOKEN = get_env_variable("JIRA_API_TOKEN")
 
 stk_access_token = get_stk_bearer_token(client_id, client_secret, realm)
