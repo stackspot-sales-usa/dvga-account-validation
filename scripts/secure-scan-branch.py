@@ -10,13 +10,10 @@ client_id = get_env_variable("STK_CLIENT_ID")
 client_secret = get_env_variable("STK_CLIENT_SECRET")
 realm = get_env_variable("STK_CLIENT_REALM")
 commit_sha = get_env_variable("GITHUB_SHA")
-#gh_access_token = get_env_variable("GH_TOKEN")
 JIRA_API_TOKEN = get_env_variable("JIRA_API_TOKEN")
 
 stk_access_token = get_stk_bearer_token(client_id, client_secret, realm)
-qc_slug = "poc-foxconn-by-ticket"
-repo_owner = "stackspot-sales-usa"
-repo_name = "mvp-sec-issue-ticket"
+qc_slug = "security-scan-personify"
 
 repo_path = os.getenv("GITHUB_WORKSPACE", ".")
 code_dict = read_select_files_in_repo(repo_path)
