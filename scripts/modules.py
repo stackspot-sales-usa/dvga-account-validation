@@ -85,7 +85,7 @@ def execute_qc_and_get_response(stk_access_token, qc_slug,input_data, file_name)
     else:
         return None
     
-def process_file(file_name, file_code, stk_access_token, qc_slug, repo_owner, repo_name, gh_access_token, JIRA_API_TOKEN):
+def process_file(file_name, file_code, stk_access_token, qc_slug, repo_owner, repo_name, JIRA_API_TOKEN):
     print(f"Started processing file: {os.path.basename(file_name)}")
     if not file_code:  # Check if the file code is empty
         print(f"Skipping empty file: {file_name}")
@@ -178,28 +178,6 @@ def read_select_files_in_repo(repo_path):
                 code_dict[file_path] = sanitize_code(f.read())
     
     return code_dict
-
-def get_commit_files(repo_owner, repo_name, commit_sha, gh_access_token):
-    commit_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/commits/{commit_sha}"
-    headers = {'Authorization': f'token {gh_access_token}'}
-    response = requests.get(commit_url, headers=headers)
-    response.raise_for_status()
-    commit_data = response.json()
-    files = commit_data['files']
-    
-    result = {}
-    for file in files:
-        filename = file['filename']
-        file_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{filename}?ref={commit_sha}"
-        file_response = requests.get(file_url, headers=headers)
-        file_response.raise_for_status()
-        file_content_data = file_response.json()
-        filecode = requests.get(file_content_data['download_url']).text
-        print(f"Adding file: {filename}")
-        #print(f"file's code: {filecode}")
-        result[filename] = filecode
-    
-    return result
 
 def create_jira_issue(issue_title, issue_description, JIRA_API_TOKEN,file_name):
     JIRA_INSTANCE_URL = 'https://stackspot-sales-us.atlassian.net'
