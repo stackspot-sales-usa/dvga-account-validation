@@ -6,7 +6,7 @@ explicit_allow_list:
   - "Dockerfile"
   - "safe_script.py"
 implicit_allow_extensions:
-  - ".txt"
+#  - ".txt"
 #  - ".py"
   - ".cpp"
   - "arm64"
