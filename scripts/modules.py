@@ -87,25 +87,31 @@ def execute_qc_and_get_response(stk_access_token, qc_slug,input_data, file_name)
     
 def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN):
     print(f"Started processing file: {os.path.basename(file_name)}")
+    
     if not file_code:  # Check if the file code is empty
         print(f"Skipping empty file: {file_name}")
         return
+
+    response = None  # Initialize response to avoid referencing before assignment
 
     try:
         response = execute_qc_and_get_response(stk_access_token, qc_slug, file_code, file_name)
     except Exception as e:
         print(f"Error processing file {file_name}: {e}")
-        print(f'This was the response from Stackspot AI: {response}')
+        if response:
+            print(f'This was the response from Stackspot AI: {response}')
+        else:
+            print(f"No response received from Stackspot AI for file {file_name}")
         return
 
     print(f"{os.path.basename(file_name)} has been PROCESSED")
-    # in my rqc step 3 represents if it secure, true, or unsecure, false.
-    issue_dict=process_api_response_to_issue_dict(response, os.path.basename(file_name))
-    for title,body in issue_dict.items():
-        '''title=json.dumps(title)
-        body=json.dumps(body)'''
-
+    
+    # Assuming step 3 represents if it is secure (true) or unsecure (false)
+    issue_dict = process_api_response_to_issue_dict(response, os.path.basename(file_name))
+    
+    for title, body in issue_dict.items():
         create_jira_issue(title, body, JIRA_API_TOKEN, file_name)
+
 
 
 def sanitize_code(code):

@@ -22,11 +22,10 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
     futures = [
         executor.submit(
             process_file, file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN
-        
-            
         )
         for file_name, file_code in code_dict.items()
     ]
+    
     for future in concurrent.futures.as_completed(futures):
         try:
             future.result()
