@@ -7,6 +7,6 @@ explicit_allow_list:
   - "safe_script.py"
 implicit_allow_extensions:
 #  - ".txt"
-  - ".py"
+#  - ".py"
   - ".cpp"
   - "arm64"

@@ -56,36 +56,64 @@ def create_rqc_execution(qc_slug, stk_access_token, input_data, file_name):
         print(f'{file_name} stackspot create rqc api response:{response.status_code}')
         return None
 
-def get_execution_status(execution_id, stk_access_token,file_name):
+def get_execution_status(execution_id, stk_access_token,file_name, qc_timeout_limit, input_data, qc_slug):
     url = f"https://genai-code-buddy-api.stackspot.com/v1/quick-commands/callback/{execution_id}"
     headers = {'Authorization': f'Bearer {stk_access_token}'}
     i = 0
-
-    response = requests.get(url, headers=headers)
+    retries=3 #the number of retries after a failed API call
+    retry_count = 0
+    
     while True:
-        response = requests.get(url, headers=headers)
-        response_data = response.json()
-        status = response_data['progress']['status']
-        if status in ['COMPLETED', 'FAILURE']:
-            print(f"{os.path.basename(file_name)}: Execution complete!")
-            return response_data
-        else:
-            print(f"{os.path.basename(file_name)}: Status:", f'{status} ({i} seconds elapsed)')
-            print(f"{os.path.basename(file_name)}: Execution in progress, waiting...")
-            i += 5
-            time.sleep(5)  # Wait for 5 seconds before polling again
+        try:
+            # Make the API call
+            response = requests.get(url, headers=headers)
+            
+            # Check if the response is successful
+            if response.status_code == 200:
+                response_data = response.json()
+                status = response_data['progress']['status']
+                
+                if status == 'COMPLETED':
+                    print(f"{os.path.basename(file_name)}: Execution complete!")
+                    return response_data
+                if status == 'FAILURE':
+                    print(f"ERROR: The execution fot the file {os.path.basename(file_name)} FAILED, restarting execution now!")
+                    return execute_qc_and_get_response(stk_access_token, qc_slug, input_data, file_name, qc_timeout_limit)
+                else:
+                    print(f"{os.path.basename(file_name)}: Status: {status} ({i} seconds elapsed)")
+                    print(f"{os.path.basename(file_name)}: Execution in progress, waiting...")
+                    i += 5
+                    time.sleep(5)  # Wait for 5 seconds before polling again
+            else:
+                # If the response is not successful, raise an exception to trigger retry
+                raise Exception(f"{os.path.basename(file_name)}: API call failed with status code {response.status_code}")
+        
+        except Exception as e:
+            print(f"{os.path.basename(file_name)}: Error: {e}")
+            retry_count += 1
+            
+            if retry_count >= retries:
+                print(f"{os.path.basename(file_name)}: Error: Maximum retries reached. Giving up.")
+                return None  # Or handle the failure as needed
+            else:
+                print(f"{os.path.basename(file_name)}: Retrying... Attempt {retry_count} of {retries}")
+                time.sleep(5)  # Wait before retrying
+        
+        # Check if the timeout limit has been reached
+        if i >= qc_timeout_limit:
+            print(f"{os.path.basename(file_name)}: Error: RQC Execution took too long ({i} seconds)")
+            print(f"{os.path.basename(file_name)}: Error: Execution took too long and is being RESTARTED")
+            return execute_qc_and_get_response(stk_access_token, qc_slug, input_data, file_name, qc_timeout_limit)
 
-def execute_qc_and_get_response(stk_access_token, qc_slug,input_data, file_name):
+def execute_qc_and_get_response(stk_access_token, qc_slug,input_data, file_name, qc_timeout_limit):
     execution_id = create_rqc_execution(qc_slug, stk_access_token, input_data, file_name)
     if execution_id:
-        execution_status = get_execution_status(execution_id, stk_access_token,file_name)
-        if execution_status['progress']['status'] == "FAILURE":
-            print(f"Execution failed for file: {file_name} (Execution ID: {execution_id})")
+        execution_status = get_execution_status(execution_id, stk_access_token,file_name, qc_timeout_limit, input_data, qc_slug)
         return execution_status
     else:
         return None
     
-def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN):
+def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN, qc_timeout_limit):
     print(f"Started processing file: {os.path.basename(file_name)}")
     
     if not file_code:  # Check if the file code is empty
@@ -95,7 +123,7 @@ def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN
     response = None  # Initialize response to avoid referencing before assignment
 
     try:
-        response = execute_qc_and_get_response(stk_access_token, qc_slug, file_code, file_name)
+        response = execute_qc_and_get_response(stk_access_token, qc_slug,file_code, file_name, qc_timeout_limit)
         print(f"Raw response from StackSpot AI: {response}") # Log the raw response
     except Exception as e:
         print(f"Error processing file {file_name}: {e}")
