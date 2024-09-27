@@ -14,7 +14,7 @@ JIRA_API_TOKEN = get_env_variable("JIRA_API_TOKEN")
 
 stk_access_token = get_stk_bearer_token(client_id, client_secret, realm)
 qc_slug = "security-scan-personify"
-qc_timeout_limit=30#700
+qc_timeout_limit=700#700
 repo_path = os.getenv("GITHUB_WORKSPACE", ".")
 code_dict = read_select_files_in_repo(repo_path)
 
