@@ -3,10 +3,10 @@ explicit_deny_list:
 #  - "Dockerfile2.arm64"
   - "virus.bat"
 explicit_allow_list:
-  - "Dockerfile"
+#  - "Dockerfile"
   - "safe_script.py"
 implicit_allow_extensions:
-  - ".txt"
-#  - ".py"
+#  - ".txt"
+  - ".py"
   - ".cpp"
   - "arm64"

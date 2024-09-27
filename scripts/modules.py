@@ -124,7 +124,7 @@ def process_file(file_name, file_code, stk_access_token, qc_slug, JIRA_API_TOKEN
 
     try:
         response = execute_qc_and_get_response(stk_access_token, qc_slug,file_code, file_name, qc_timeout_limit)
-        print(f"Raw response from StackSpot AI: {response}") # Log the raw response
+        #print(f"Raw response from StackSpot AI: {response}") # Log the raw response
     except Exception as e:
         print(f"Error processing file {file_name}: {e}")
         if response:
