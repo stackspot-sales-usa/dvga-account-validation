@@ -1,9 +1,6 @@
 name: Find Vulnerabilties in branch:develop
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:
