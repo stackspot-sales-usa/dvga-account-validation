@@ -94,7 +94,7 @@ def get_execution_status(execution_id, stk_access_token,file_name, qc_timeout_li
             
             if retry_count >= retries:
                 print(f"{os.path.basename(file_name)}: Error: Maximum retries reached. Giving up.")
-                return None  # Or handle the failure as needed
+                return execute_qc_and_get_response(stk_access_token, qc_slug, input_data, file_name, qc_timeout_limit)
             else:
                 print(f"{os.path.basename(file_name)}: Retrying... Attempt {retry_count} of {retries}")
                 time.sleep(5)  # Wait before retrying
